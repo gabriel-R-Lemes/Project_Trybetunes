@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import Loading from '../pages/Loading';
 import { getUser } from '../services/userAPI';
 
@@ -31,7 +32,7 @@ class Header extends React.Component {
             <header
               data-testid="header-component"
             >
-              <h1 
+              <h1
                 data-testid="header-user-name"
               >
                 Olá,
@@ -39,6 +40,9 @@ class Header extends React.Component {
               </h1>
             </header>
           ) : <Loading />}
+        <Link to="/search" data-testid="link-to-search"> Search </Link>
+        <Link to="/favorites" data-testid="link-to-favorites"> Favorites </Link>
+        <Link to="/profile" data-testid="link-to-profile"> Profile </Link>
       </div>
     );
   }
