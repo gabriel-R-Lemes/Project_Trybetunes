@@ -1,5 +1,5 @@
 import React from 'react';
-// import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 import Header from '../components/Header';
 import Loading from './Loading';
 import searchAlbumsAPI from '../services/searchAlbumsAPI';
@@ -14,6 +14,7 @@ class Search extends React.Component {
       awaiting: false,
       responseOfSearch: [],
       search: '',
+      returnedAPI: false,
     };
   }
 
@@ -25,11 +26,11 @@ class Search extends React.Component {
   };
 
   handleClick = async () => {
-    const { name, search } = this.state;
-    this.setState({ search: name });
-    this.setState({ name: '', awaiting: true });
-    const result = await searchAlbumsAPI(search);
-    this.setState({ awaiting: false, responseOfSearch: result });
+    const { name } = this.state;
+    this.setState({ search: name, awaiting: true, returnedAPI: false });
+    const result = await searchAlbumsAPI(name);
+    await this.setState({ awaiting: false, responseOfSearch: result });
+    await this.setState({ name: '', returnedAPI: true });
   };
 
   shoudEnable = () => {
@@ -39,7 +40,14 @@ class Search extends React.Component {
   };
 
   render() {
-    const { name, isDisabled, awaiting, responseOfSearch, search } = this.state;
+    const {
+      name,
+      isDisabled,
+      awaiting,
+      responseOfSearch,
+      search,
+      returnedAPI,
+    } = this.state;
     const myForms = (
       <form>
         <input
@@ -61,22 +69,35 @@ class Search extends React.Component {
         </button>
       </form>
     );
+    const resultAlbum = 'Resultado de álbuns de: ';
     return (
       <div data-testid="page-search">
         <Header />
         { awaiting ? <Loading /> : myForms }
-        { responseOfSearch.length > 0 ?
-          <h2>
-            Resultado de álbuns de:
-            { search }
-          </h2> : <span>Nenhum álbum foi encontrado</span>}
+        <h2>
+          { resultAlbum }
+          { search }
+        </h2>
+        {responseOfSearch.map((album) => (
+          <div
+            key={ album.collectionId }
+          >
+            <img src={ album.artworkUrl100 } alt={ album.collectionName } />
+            <h3>{ album.collectionName }</h3>
+            <p>{ album.artistName }</p>
+            <Link
+              to={ `/album/${album.collectionId}` }
+              data-testid={ `link-to-album-${album.collectionId}` }
+            >
+              Redirect Álbum
+            </Link>
+            <br />
+          </div>))}
+        { returnedAPI && responseOfSearch.length > 0 ? ''
+          : <p>Nenhum álbum foi encontrado</p> }
       </div>
     );
   }
 }
-
-// Login.propTypes = {
-
-// };
 
 export default Search;
