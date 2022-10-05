@@ -19,10 +19,12 @@ class MusicCard extends React.Component {
 
   checkFavorite = async () => {
     const { musica } = this.props;
+    // isChecked ?
     this.setState({ loading: true });
     const alreadyFav = await getFavoriteSongs();
     this.setState({ loading: false });
-    const isFav = alreadyFav.find((song) => (song.musica.trackId === musica.trackId));
+    console.log(musica, alreadyFav);
+    const isFav = alreadyFav.find((song) => (song.trackId === musica.trackId));
     if (isFav) {
       this.setState({ isChecked: true });
     }
@@ -30,11 +32,8 @@ class MusicCard extends React.Component {
 
   handleChange = async () => {
     const { musica } = this.props;
-    const track = {
-      musica,
-    };
     this.setState({ loading: true });
-    await addSong(track);
+    await addSong(musica);
     await getFavoriteSongs();
     this.setState({ loading: false, isChecked: true });
   };
