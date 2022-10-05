@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import Header from '../components/Header';
 import MusicCard from '../components/MusicCard';
 import getMusics from '../services/musicsAPI';
+import Loading from './Loading';
 
 class Album extends React.Component {
   constructor() {
@@ -10,6 +11,7 @@ class Album extends React.Component {
     this.state = {
       results: [],
       collection: {},
+      loading: false,
     };
   }
 
@@ -29,7 +31,8 @@ class Album extends React.Component {
   };
 
   render() {
-    const { results, collection } = this.state;
+    const { results, collection, loading } = this.state;
+    if (loading) { <Loading />; }
     return (
       <div data-testid="page-album">
         <Header />
