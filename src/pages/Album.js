@@ -48,6 +48,7 @@ class Album extends React.Component {
             <MusicCard
               trackName={ album.trackName }
               previewUrl={ album.previewUrl }
+              trackId={ album.trackId }
               key={ album.trackName }
             />
           </div>
@@ -58,11 +59,11 @@ class Album extends React.Component {
 }
 
 Album.propTypes = {
-  match: {
-    params: {
+  match: PropTypes.shape({
+    params: PropTypes.shape({
       id: PropTypes.string.isRequired,
-    },
-  }.isRequired,
+    }).isRequired,
+  }).isRequired,
 };
 
 export default Album;
