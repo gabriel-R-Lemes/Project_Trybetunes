@@ -13,6 +13,10 @@ class Album extends React.Component {
     };
   }
 
+  componentDidMount() {
+    this.getMusicsFromAPI();
+  }
+
   getMusicsFromAPI = async () => {
     const { match } = this.props;
     const result = await getMusics(match.params.id);
@@ -26,7 +30,6 @@ class Album extends React.Component {
 
   render() {
     const { results, collection } = this.state;
-    this.getMusicsFromAPI();
     return (
       <div data-testid="page-album">
         <Header />
@@ -42,14 +45,11 @@ class Album extends React.Component {
           <p>{ collection.collectionName }</p>
           <p>{ collection.artistName }</p>
         </h3>
-        { results.map((album) => (
-          <div key={ album.trackId }>
+        { results.map((musica) => (
+          <div key={ musica.trackId }>
             <br />
             <MusicCard
-              trackName={ album.trackName }
-              previewUrl={ album.previewUrl }
-              trackId={ album.trackId }
-              key={ album.trackName }
+              musica={ musica }
             />
           </div>
         ))}

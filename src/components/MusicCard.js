@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import addSong from '../services/favoriteSongsAPI';
+import { addSong } from '../services/favoriteSongsAPI';
 import Loading from '../pages/Loading';
 
 class MusicCard extends React.Component {
@@ -9,19 +9,32 @@ class MusicCard extends React.Component {
 
     this.state = {
       loading: false,
+      isChecked: false,
     };
   }
 
-  render() {
+  handleChange = async () => {
     const { trackName, previewUrl, trackId } = this.props;
-    const { loading } = this.state;
+    const track = {
+      trackName,
+      previewUrl,
+      trackId,
+    };
+    this.setState({ loading: true });
+    await addSong(track);
+    this.setState({ loading: false, isChecked: true });
+  };
+
+  render() {
+    const { musica } = this.props;
+    const { loading, isChecked } = this.state;
     if (loading) {
       return <Loading />;
     }
     return (
       <>
-        <p>{ trackName }</p>
-        <audio data-testid="audio-component" src={ previewUrl } controls>
+        <p>{ musica.trackName }</p>
+        <audio data-testid="audio-component" src={ musica.previewUrl } controls>
           <track kind="captions" />
           O seu navegador não suporta o elemento
           {' '}
@@ -30,27 +43,23 @@ class MusicCard extends React.Component {
           </code>
           .
         </audio>
-        <label
-          htmlFor="favorite"
-          data-testid={ `checkbox-music-${trackId}` }
-        >
+        <label htmlFor="favorite">
           Favorita
+          <input
+            type="checkbox"
+            id="favorite"
+            data-testid={ `checkbox-music-${musica.trackId}` }
+            onClick={ this.handleChange }
+            checked={ isChecked }
+          />
         </label>
-        <input
-          type="checkbox"
-          name="favorite"
-          id="favorite"
-        />
       </>
     );
   }
 }
 
 MusicCard.propTypes = {
-  trackName: PropTypes.string.isRequired,
-  previewUrl: PropTypes.string.isRequired,
-  trackId: PropTypes.number.isRequired,
-
-};
+  musica: PropTypes.PropTypes.shape(),
+}.isRequired;
 
 export default MusicCard;
