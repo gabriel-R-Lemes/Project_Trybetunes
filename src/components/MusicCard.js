@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { addSong, getFavoriteSongs } from '../services/favoriteSongsAPI';
+import { addSong, getFavoriteSongs, removeSong } from '../services/favoriteSongsAPI';
 import Loading from '../pages/Loading';
 
 class MusicCard extends React.Component {
@@ -19,7 +19,6 @@ class MusicCard extends React.Component {
 
   checkFavorite = async () => {
     const { musica } = this.props;
-    // isChecked ?
     this.setState({ loading: true });
     const alreadyFav = await getFavoriteSongs();
     this.setState({ loading: false });
@@ -31,11 +30,17 @@ class MusicCard extends React.Component {
   };
 
   handleChange = async () => {
-    const { musica } = this.props;
-    this.setState({ loading: true });
-    await addSong(musica);
-    await getFavoriteSongs();
-    this.setState({ loading: false, isChecked: true });
+    const { musica, isChecked } = this.props;
+    if (isChecked) {
+      this.setState({ loading: true });
+      await removeSong(musica);
+      this.setState({ loading: false, isChecked: false });
+    } else {
+      this.setState({ loading: true });
+      await addSong(musica);
+      await getFavoriteSongs();
+      this.setState({ loading: false, isChecked: true });
+    }
   };
 
   render() {
